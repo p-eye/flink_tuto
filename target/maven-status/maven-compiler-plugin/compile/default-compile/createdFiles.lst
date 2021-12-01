@@ -1,4 +1,3 @@
-jdbc/JdbcDemo$User.class
 p1/WordCount.class
 p1/AverageProfit.class
 p1/UptoTen$2.class
@@ -28,3 +27,4 @@ kafka/KafkaDemo$WordReader.class
 p1/OddEven.class
 p1/JoinExample$MyMap.class
 p1/JoinExample.class
+jdbc/User.class
