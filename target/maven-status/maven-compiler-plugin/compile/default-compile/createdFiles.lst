@@ -1,3 +1,4 @@
+jdbc/JdbcDemo$User.class
 p1/WordCount.class
 p1/AverageProfit.class
 p1/UptoTen$2.class
@@ -14,6 +15,7 @@ p1/WordCount$Tokenizer.class
 p1/OddEven$1.class
 kafka/KafkaDemo.class
 p1/UptoTen$1.class
+jdbc/JdbcDemo.class
 p1/JoinExample$MyFullOuterJoin.class
 p1/AverageProfit$MyMap.class
 p1/Aggregation$Splitter.class
