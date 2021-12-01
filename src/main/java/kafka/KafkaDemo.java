@@ -13,31 +13,28 @@ import java.util.Properties;
 
 public class KafkaDemo {
 
-    private static final String OUTPUT_PATH = "/Users/mk-mac-281/Downloads/flink_tuto_output";
-
     public static void main(String[] args) throws Exception {
         final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
-        Properties p = new Properties();
-        //p.setProperty("bootstrap.servers", "127.0.0.1:9092");
-
-//        DataStream<String> kafkaData = env.addSource(
-//                new FlinkKafkaConsumer<>("test", new SimpleStringSchema(), p));
-
-        KafkaSource<String> kafkaSource = KafkaSource.<String>builder()
-                .setTopics("test")
-                .setBootstrapServers("127.0.0.1:9092")
-                .setValueOnlyDeserializer(new SimpleStringSchema())
-                .setProperties(p)
-                .build();
-
-        DataStream<String> kafkaData  = env.fromSource(kafkaSource, WatermarkStrategy.noWatermarks(), "temp");
+        KafkaSource<String> kafkaSource = createKafkaSource();
+        DataStream<String> kafkaData = env.fromSource(kafkaSource, WatermarkStrategy.noWatermarks(), "temp");
         DataStream<Tuple2<String, Integer>> counts = kafkaData.flatMap(new WordReader())
                         .keyBy(t -> t.f0)
                         .sum(1);
         counts.print();
 
         env.execute("Kafka Example");
+    }
+
+    public static KafkaSource<String> createKafkaSource() {
+        Properties p = new Properties();
+
+        return KafkaSource.<String>builder()
+                .setTopics("test")
+                .setBootstrapServers("127.0.0.1:9092")
+                .setValueOnlyDeserializer(new SimpleStringSchema())
+                .setProperties(p)
+                .build();
     }
 
     public static class WordReader implements FlatMapFunction<String, Tuple2<String, Integer>> {
