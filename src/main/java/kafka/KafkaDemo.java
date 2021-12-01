@@ -18,31 +18,30 @@ import org.apache.flink.streaming.api.functions.sink.filesystem.StreamingFileSin
 import org.apache.flink.streaming.api.functions.sink.filesystem.rollingpolicies.DefaultRollingPolicy;
 
 public class KafkaDemo {
+
+    private static final String OUTPUT_PATH = "/Users/mk-mac-281/Downloads/flink_tuto_output";
+
     public static void main(String[] args) throws Exception {
         final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
         Properties p = new Properties();
         p.setProperty("bootstrap.servers", "127.0.0.1:9092");
 
-        DataStream < String > kafkaData = env.addSource(new FlinkKafkaConsumer < String > ("test",
-                new SimpleStringSchema(),
-                p));
+        DataStream < String > kafkaData = env.addSource(
+                new FlinkKafkaConsumer<>("test", new SimpleStringSchema(), p));
 
+        DataStream<Tuple2<String, Integer>> counts =
         kafkaData.flatMap(new FlatMapFunction < String, Tuple2 < String, Integer >> () {
-                    public void flatMap(String value, Collector < Tuple2 < String, Integer >> out) {
+                    public void flatMap(String value, Collector<Tuple2<String, Integer>> out) {
                         String[] words = value.split(" ");
                         for (String word: words)
-                            out.collect(new Tuple2 < String, Integer > (word, 1));
+                            out.collect(new Tuple2<>(word, 1));
                     }
                 })
 
                 .keyBy(t -> t.f0)
-                .sum(1)
-                .addSink(StreamingFileSink
-                        .forRowFormat(new Path("/home/jivesh/kafka.txt"),
-                                new SimpleStringEncoder < Tuple2 < String, Integer >> ("UTF-8"))
-                        .withRollingPolicy(DefaultRollingPolicy.builder().build())
-                        .build());
+                .sum(1);
+        counts.print();
 
         env.execute("Kafka Example");
     }
