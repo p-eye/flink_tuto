@@ -16,13 +16,13 @@ kafka/KafkaDemo.class
 p1/UptoTen$1.class
 p1/JoinExample$MyFullOuterJoin.class
 p1/AverageProfit$MyMap.class
-kafka/KafkaDemo$1.class
 p1/Aggregation$Splitter.class
 p1/JoinExample$MyRightOuterJoin.class
 p1/OddEven$3.class
 p1/UptoTen$3.class
 p1/WordCountStreaming.class
 p1/AverageProfit$Splitter.class
+kafka/KafkaDemo$WordReader.class
 p1/OddEven.class
 p1/JoinExample$MyMap.class
 p1/JoinExample.class
