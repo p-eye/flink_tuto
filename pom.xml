@@ -71,7 +71,7 @@
                 <!-- MainClass in mainfest make a executable jar -->
                 <archive>
                     <manifest>
-                        <mainClass>jdbc.JdbcDemo</mainClass>
+                        <mainClass>kafka.KafkaCheckpointDemo</mainClass>
                     </manifest>
                 </archive>
 

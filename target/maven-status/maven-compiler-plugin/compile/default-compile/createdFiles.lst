@@ -14,12 +14,14 @@ p1/WordCount$Tokenizer.class
 p1/OddEven$1.class
 kafka/KafkaDemo.class
 p1/UptoTen$1.class
+kafka/KafkaPositionDemo.class
 jdbc/JdbcDemo.class
 p1/JoinExample$MyFullOuterJoin.class
 p1/AverageProfit$MyMap.class
 p1/Aggregation$Splitter.class
 p1/JoinExample$MyRightOuterJoin.class
 p1/OddEven$3.class
+kafka/KafkaPositionDemo$WordReader.class
 p1/UptoTen$3.class
 p1/WordCountStreaming.class
 p1/AverageProfit$Splitter.class
@@ -27,4 +29,5 @@ kafka/KafkaDemo$WordReader.class
 p1/OddEven.class
 p1/JoinExample$MyMap.class
 p1/JoinExample.class
+kafka/KafkaPositionDemo$UserParser.class
 jdbc/User.class
