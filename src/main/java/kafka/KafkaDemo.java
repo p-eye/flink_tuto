@@ -13,36 +13,37 @@ import java.util.Properties;
 
 public class KafkaDemo {
 
-    public static void main(String[] args) throws Exception {
-        final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
+  public static void main(String[] args) throws Exception {
+    final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
-        KafkaSource<String> kafkaSource = createKafkaSource();
-        DataStream<String> kafkaData = env.fromSource(kafkaSource, WatermarkStrategy.noWatermarks(), "temp");
-        DataStream<Tuple2<String, Integer>> counts = kafkaData.flatMap(new WordReader())
-                        .keyBy(t -> t.f0)
-                        .sum(1);
-        counts.print();
+    KafkaSource<String> kafkaSource = createKafkaSource();
+    DataStream<String> kafkaData =
+        env.fromSource(kafkaSource, WatermarkStrategy.noWatermarks(), "temp");
+    DataStream<Tuple2<String, Integer>> counts = kafkaData.flatMap(new WordReader())
+        .keyBy(t -> t.f0)
+        .sum(1);
+    counts.print();
 
-        env.execute("Kafka Example");
+    env.execute("Kafka Example");
+  }
+
+  public static KafkaSource<String> createKafkaSource() {
+    Properties p = new Properties();
+
+    return KafkaSource.<String>builder()
+        .setTopics("test")
+        .setBootstrapServers("127.0.0.1:9092")
+        .setValueOnlyDeserializer(new SimpleStringSchema())
+        .setProperties(p)
+        .build();
+  }
+
+  public static class WordReader implements FlatMapFunction<String, Tuple2<String, Integer>> {
+    public void flatMap(String value, Collector<Tuple2<String, Integer>> out) {
+      String[] words = value.split(" ");
+      for (String word : words) {
+        out.collect(new Tuple2<>(word, 1));
+      }
     }
-
-    public static KafkaSource<String> createKafkaSource() {
-        Properties p = new Properties();
-
-        return KafkaSource.<String>builder()
-                .setTopics("test")
-                .setBootstrapServers("127.0.0.1:9092")
-                .setValueOnlyDeserializer(new SimpleStringSchema())
-                .setProperties(p)
-                .build();
-    }
-
-    public static class WordReader implements FlatMapFunction<String, Tuple2<String, Integer>> {
-        public void flatMap(String value, Collector<Tuple2<String, Integer>> out) {
-            String[] words = value.split(" ");
-            for (String word: words) {
-                out.collect(new Tuple2<>(word, 1));
-            }
-        }
-    }
+  }
 }

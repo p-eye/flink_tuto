@@ -9,41 +9,42 @@ import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 
 public class WordCountStreaming {
 
-    public static void main(String[] args) throws Exception {
-        // set up the stream execution environment
-        final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
+  public static void main(String[] args) throws Exception {
+    // set up the stream execution environment
+    final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
-        // Checking input parameters
-        final ParameterTool params = ParameterTool.fromArgs(args);
+    // Checking input parameters
+    final ParameterTool params = ParameterTool.fromArgs(args);
 
-        // make parameters available in the web interface
-        env.getConfig().setGlobalJobParameters(params);
+    // make parameters available in the web interface
+    env.getConfig().setGlobalJobParameters(params);
 
-        DataStream<String> text = env.socketTextStream("localhost", 9999);
+    DataStream<String> text = env.socketTextStream("localhost", 9999);
 
-        //dataSet에서는 groupBy였는데, dataStream에서는 keyBy다.
-        DataStream<Tuple2<String, Integer>> counts = text.filter(new MyFilter())
-                .map(new Tokenizer()) // split up the lines in pairs (2-tuples) containing: tuple2 {(name,1)...}
-                .keyBy(t -> t.f0)
-                .sum(1); // group by the tuple field "0" and sum up tuple field "1"
+    //dataSet에서는 groupBy였는데, dataStream에서는 keyBy다.
+    DataStream<Tuple2<String, Integer>> counts = text.filter(new MyFilter())
+        .map(
+            new Tokenizer()) // split up the lines in pairs (2-tuples) containing: tuple2 {(name,1)...}
+        .keyBy(t -> t.f0)
+        .sum(1); // group by the tuple field "0" and sum up tuple field "1"
 
-        counts.print();
+    counts.print();
 
-        // execute program
-        env.execute("Streaming WordCount");
+    // execute program
+    env.execute("Streaming WordCount");
+  }
+
+  public static final class Tokenizer implements MapFunction<String, Tuple2<String, Integer>> {
+    public Tuple2<String, Integer> map(String value) {
+      return new Tuple2<>(value, Integer.valueOf(1));
     }
+  }
 
-    public static final class Tokenizer implements MapFunction< String, Tuple2 < String, Integer >> {
-        public Tuple2 <String, Integer> map(String value) {
-            return new Tuple2<>(value, Integer.valueOf(1));
-        }
+  public static final class MyFilter implements FilterFunction<String> {
+    // filter logic
+    public boolean filter(String value) {
+      return value.startsWith("N");
     }
-
-    public static final class MyFilter implements FilterFunction<String> {
-        // filter logic
-        public boolean filter(String value) {
-            return value.startsWith("N");
-        }
-    }
+  }
 }
 
